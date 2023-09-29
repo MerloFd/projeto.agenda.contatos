@@ -5,26 +5,11 @@ let linhas = ''; //para criar novas linhas. Global pois vai ser usada em outras 
 const ligarImg = '<img class="telefonar-img" src="./images/telefone-img.png" alt="telefonar">'
 const mensagemImg = '<img class="whatsapp-img" src="./images/whatsapp-logo.png" alt="enviar mensagem"></td>'
 
-const buttonExcluir = '<button class="excluir" type="button"><img class="lixeira-icon" src="./images/lixeira-icon.png" alt="excluir contatos"></button>'
-
-document.addEventListener('click', function(e){
-    e.preventDefault();
-    console.log('Botão Clicado2');
-
-    //atribui o alvo do evento para a const target
-    const target = e.target;
-
-    //se alvo tiver como classe 'excluir', execute X
-    if (target.classList.contains('excluir')) {
-        //chama a function com o alvo de argumento
-        excluirLinha(target);
-    }
-})
+//onclick= "excluirLinha(event)", gera o parâmetro da function excluir linha quando o elemento é clicado
+const buttonExcluir = '<button class="excluir" type="button" onclick="excluirLinha(event)"><img class="lixeira-icon" src="./images/lixeira-icon.png" alt="excluir contatos"></button>'
 
 form.addEventListener('submit', function(e){ //"gatilho" com o button que inicia os eventos
     e.preventDefault();
-
-    console.log('Botão Clicado1');
 
     adicionaLinha();
     atualizaTable();
@@ -55,12 +40,20 @@ function atualizaTable(){
     corpoTable.innerHTML = linhas;
 }
 
-//recebe como parâmetro o button
-function excluirLinha(button){
-        //usa o closest para encontrar o tr mais próximo do button
-        const conteudoLinha = button.closest('tr');
+//recebe como parâmetro o button, por meio do onclick diretamente do elemento
+function excluirLinha(event){
 
-        //remove a linha do conteúdo e atualizar a tabela
-        linhas = linhas.replace(conteudoLinha.outerHTML, '');
-        atualizaTable();
+    //usa o event como alvo (o button excluir), e usa o closest para encontrar o tr mais próximo
+    const conteudoLinha = event.currentTarget.closest('tr');
+
+    //remove o tr mais proximo do button, apagando o conteudo
+    conteudoLinha.remove();
+
+    //sincroniza o estado de linhas com o estado atual (a linha foi excluida)
+    //ele faz isso transformando o conteudo do tbody em uma array sem espaços e atualizando a table
+    linhas = Array.from(corpoTable.children)
+        .map(row => row.outerHTML)
+        .join('');
+
+    atualizaTable();
 }
